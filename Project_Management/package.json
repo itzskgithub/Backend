@@ -1,0 +1,17 @@
+{
+  "name": "project_management",
+  "version": "1.0.0",
+  "description": "Starting Backend",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node index.js"
+  },
+  "keywords": [
+    "Backend",
+    "API",
+    "creation"
+  ],
+  "author": "Shubham kumar pandey",
+  "license": "ISC"
+}
