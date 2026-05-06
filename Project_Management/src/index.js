@@ -15,7 +15,7 @@ connectDB()
         console.log(`Example is listening on the port : http://localhost:${port}`);
       })
   }).catch((err) => {
-      console.err("Not Connected to DB",err);
+      console.error("Not Connected to DB", err);
   });
 
 

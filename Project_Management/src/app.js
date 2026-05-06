@@ -20,6 +20,12 @@ app.use(
     }),
 );
 
+//import router
+
+import healthCheckRouter from './Routes/healthCheck.routes.js';
+
+app.use('/api/v1/healthcheck', healthCheckRouter);
+
 app.get('/' , (req, res) => {
     res.send("This is my first code in express")
 })
