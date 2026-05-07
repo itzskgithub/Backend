@@ -1,3 +1,11 @@
+Single line def : 
+
+    xxx.yyy.zzz
+    it consists of three parts 
+        1 header
+        2 payload 
+        3 signature
+
 JWT (JSON Web Token) — Complete Notes
 What is JWT?
 
