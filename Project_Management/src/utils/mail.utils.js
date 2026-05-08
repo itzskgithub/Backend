@@ -1,22 +1,22 @@
-import mailgen from "mailgen";
+import Mailgen from "mailgen";
 import nodemailer from "nodemailer";
 
 const sendEmail = async (option) => {
   const mailGenerator = new Mailgen({
     theme: "default",
-    products: {
+    product: {
       name: "Task Manager",
       link: "https://taskmanagelink.com",
     },
   });
 
-  const emailTextual = mailGenerator.generatePlanetext(option.mailgenContent);
+  const emailTextual = mailGenerator.generatePlaintext(option.mailgenContent);
 
   const emailHtml = mailGenerator.generate(option.mailgenContent);
 
   const transporter = nodemailer.createTransport({
     host: process.env.MAILTRAP_SMTP_HOST,
-    PORT: process.env.MAILTRAP_SMTP_PORT,
+    port: process.env.MAILTRAP_SMTP_PORT,
     auth: {
       user: process.env.MAILTRAP_SMTP_USER,
       pass: process.env.MAILTRAP_SMTP_PASS,
@@ -48,7 +48,7 @@ const emailVerificationMailgenContent = (username, verificationUrl) => {
         "Welcome to my app, i am excited to showcase my first ever backend project",
 
       action: {
-        insturctions:
+        instructions:
           "To verify your email please click on the following button",
         button: {
           color: "#12c927",
