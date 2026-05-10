@@ -6,7 +6,7 @@ import {
   emailVerificationMailgenContent,
   sendEmail,
 } from "../utils/mail.utils.js";
-import {verifyJWT} from '../middlewares/auth.middlewares.js'
+import { verifyJWT } from '../middlewares/auth.middlewares.js'
 
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
@@ -108,7 +108,7 @@ const login = asyncHandler(async (req, res) => {
   );
 
   const options = {
-    httpOnly : true,
+    httpOnly: true,
     // secure : true
   }
   return res
@@ -119,7 +119,7 @@ const login = asyncHandler(async (req, res) => {
       new Apiresponses(
         200,
         {
-          user : loggedInUser,
+          user: loggedInUser,
           accessToken,
           refreshToken
         },
@@ -129,28 +129,78 @@ const login = asyncHandler(async (req, res) => {
 
 })
 
-const logoutUser = asyncHandler(async(req, res) => {
-    await User.findByIdAndUpdate(
-      req.user._id,
-      {
-        $set : {
-          refreshToken : ""
-        }
-      },
-      {
-        new : true
+const logoutUser = asyncHandler(async (req, res) => {
+  await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $set: {
+        refreshToken: ""
       }
-        
-      
-    );
-    const options = {
-      httpOnly : true,
-      secure : true
+    },
+    {
+      new: true
     }
-    return res.status(200)
+
+
+  );
+  const options = {
+    httpOnly: true,
+    secure: true
+  }
+  return res.status(200)
     .clearCookie("accessToken", options)
     .clearCookie("refreshToken", options)
     .json(new Apiresponses(200, {}, "User logged out"))
 })
 
-export { registerUser , login, logoutUser };
+const getCurrentUser = asyncHandler(async(req, res) => {
+  return res
+    .status(200)
+    .json(new Apiresponses(200, req.user, "Current User fetched successfully"))
+});
+
+const verifyEmail = asyncHandler(async(req, res) => {
+  const {verificationToken} = req.params
+
+  if(!verificationToken){
+    throw new Apierrors(400, "Email verification token is missing");
+  }
+
+  let hashedToken = crypto
+    .createHash("sha256")
+    .update(verificationToken)
+    .digest("hex")
+
+    const user = await User.findOne({
+      emailVerificationToken : hashedToken,
+      emailVerificationExpiry : {$gt : Date.now()}
+    })
+    if(!user){
+      throw new Apierrors(400, "Token is invalid or expired")
+    }
+    user.emailVerificationToken = undefined;
+    user.emailVerificationExpiry = undefined;
+    user.isEmailVerified = true
+    await user.save({validateBeforeSave : false})
+
+    return res
+      .status(200)
+      .json(
+        new Apiresponses(
+          200,
+          {
+            isEmailVerified : true
+          },
+          "Email is verified"
+          
+        )
+      )
+})
+
+export { 
+  registerUser, 
+  login, 
+  logoutUser, 
+  getCurrentUser,
+  verifyEmail
+};
