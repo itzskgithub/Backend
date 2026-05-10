@@ -7,6 +7,7 @@ import {
   sendEmail,
 } from "../utils/mail.utils.js";
 import { verifyJWT } from '../middlewares/auth.middlewares.js'
+import jwt from 'jsonwebtoken'
 
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
@@ -237,6 +238,53 @@ const resendEmailVerification = asyncHandler(async(req, res) => {
 
 })
 
+const refreshAccessToken = asyncHandler(async(req, res) => {
+  const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken
+
+  if(!incomingRefreshToken){
+    throw new Apierrors(401, "Unauthorized access")
+  }
+
+  try {
+    const decodedToken = jwt.verify(incomingRefreshToken, process.env.REFRESH_TOKEN_SECRET)
+
+    const user = await user.findById(decodedToken?._id)
+    if(!user){
+      throw new Apierrors(401, "invalid refresh token")
+    }
+    if(incomingRefreshToken !== user?.refreshToken){
+      throw new Apierrors(401, "refresh token is expired")
+    }
+
+
+    const options = {
+      httpOnly : true,
+      secure : true
+    }
+
+    const { accessToken, refreshToken : newRefreshToken } = await generateAccessAndRefreshTokens(user._id)
+
+    user.refreshToken = newRefreshToken;
+
+    await user.save()
+
+    return res
+      .status(200)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", newRefreshToken, options)
+      .json(
+        new Apiresponses(
+          200,
+          {accessToken, refreshtoken, newRefreshToken},
+          "Access token refreshed"
+        )
+      )
+  } catch (error) {
+    throw new Apierrors(401, "Invalid refresh Token")
+  };
+})
+
+  
 export { 
   registerUser, 
   login, 
