@@ -56,7 +56,7 @@ const userForgotPasswordValidator = () => {
 
 const userResetPasswordValidator = () => {
     return [
-        body("newPassword").notEmpty.withMessage("Password is required")
+        body("newPassword").notEmpty().withMessage("Password is required")
     ]
 }
 

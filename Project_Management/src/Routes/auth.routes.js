@@ -1,24 +1,25 @@
 import { Router } from "express";
-import { registerUser, 
-  login, 
-  logoutUser, 
-  getCurrentUser,
-  verifyEmail,
-  resendEmailVerification,
-  refreshAccessToken,
-  forgotPasswordRequest,
-  resetForgotPassword,
-  changePassword } from "../controllers/auth.controllers.js";
-import {validate} from "../middlewares/validator.middlewares.js"
-import { userRegisterValidator , userLoginValidator} from "../validators/index.js";
+import {
+    registerUser,
+    login,
+    logoutUser,
+    getCurrentUser,
+    verifyEmail,
+    resendEmailVerification,
+    refreshAccessToken,
+    forgotPasswordRequest,
+    resetForgotPassword,
+    changePassword
+} from "../controllers/auth.controllers.js";
+import { validate } from "../middlewares/validator.middlewares.js"
 import { verifyJWT } from "../middlewares/auth.middlewares.js";
 
 import {
-  userChangeCurrentPasswordValidator,
-  userForgotPasswordValidator,
-  userLoginValidator,
-  userRegisterValidator,
-  userResetForgotPasswordValidator,
+    userRegisterValidator,
+    userLoginValidator,
+    userChangeCurrentPasswordValidator,
+    userForgotPasswordValidator,
+    userResetPasswordValidator
 } from "../validators/index.js";
 
 const router = Router();
@@ -35,7 +36,7 @@ router.route("/refresh-token").post(refreshAccessToken);
 
 router.route("/forgot-password").post(userForgotPasswordValidator(), validate, forgotPasswordRequest);
 
-router.route("/reset-password/:resetToken").post(userResetForgotPasswordValidator(), validate, resetForgotPassword);
+router.route("/reset-password/:resetToken").post(userResetPasswordValidator(), validate, resetForgotPassword);
 
 
 
