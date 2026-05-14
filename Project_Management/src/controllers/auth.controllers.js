@@ -5,7 +5,8 @@ import { asyncHandler } from "../utils/async_handler.js";
 import {
   emailVerificationMailgenContent,
   sendEmail,
-} from "../utils/mail.utils.js";
+  forgotPasswordMailgenContent
+} from "../utils/mail.utils.js"; 
 import { verifyJWT } from '../middlewares/auth.middlewares.js'
 import jwt from 'jsonwebtoken'
 
