@@ -1,7 +1,9 @@
 import { User } from "../models/user.models.js"
+import { ProjectMember } from "../models/projectmember.models.js"
 import { Apierrors } from "../utils/api_errors.js"
 import { asyncHandler } from "../utils/async_handler.js"
 import jwt from 'jsonwebtoken'
+import mongoose from "mongoose"
 
 
 
@@ -27,3 +29,34 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
         throw new Apierrors(401, "Invalid access token")
     }
 })
+
+export const validateProjectPermission = (roles = []) => {
+    asyncHandler(async(req, res, next) => {
+        const {projectId} = req.params
+
+        if(!projectId){
+            throw new Apierrors(400, "Project id is missing")
+        }
+
+
+        const project = await ProjectMember.findOne({
+            project: new mongoose.Types.ObjectId(projectId),
+            user: new mongoose.Types.ObjectId(req.user._id)
+        })
+        if(!project){
+            throw new Apierrors(400, "Project not found")
+        }
+
+        const givenRole = project?.role
+
+        req.user.role = givenRole
+
+        if(!roles.includes(givenRole)){
+            throw new Apierrors(403, "you do not have permission to perform this action")
+        }
+
+        next()
+
+        
+    })
+}
