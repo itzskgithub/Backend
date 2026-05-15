@@ -31,7 +31,7 @@ export const verifyJWT = asyncHandler(async (req, res, next) => {
 })
 
 export const validateProjectPermission = (roles = []) => {
-    asyncHandler(async(req, res, next) => {
+    return asyncHandler(async(req, res, next) => {
         const {projectId} = req.params
 
         if(!projectId){
@@ -55,7 +55,7 @@ export const validateProjectPermission = (roles = []) => {
             throw new Apierrors(403, "you do not have permission to perform this action")
         }
 
-        next()
+        next();
 
         
     })

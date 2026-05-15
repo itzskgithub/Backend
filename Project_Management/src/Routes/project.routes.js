@@ -10,7 +10,7 @@ import {
     updateMemberRole,
     deleteMember
 } from "../controllers/project.controller.js";
-import { validate } from "../middlewares/validator.middlewares.js"
+import { validate } from "../middlewares/validator.middlewares.js";
 import { verifyJWT, validateProjectPermission } from "../middlewares/auth.middlewares.js";
 
 import {
@@ -45,8 +45,8 @@ router
 
 
 router
-    .route("/projectId/members")
-    .get(getProjectMembers)
+    .route("/:projectId/members")
+    .get(validateProjectPermission(AvailableUserRole), getProjectMembers)
     .post(
         validateProjectPermission([UserRoleEnum.ADMIN]),
         addMembertoProjectValidator(),
@@ -56,7 +56,7 @@ router
 
 
 router
-    .route("/projectId/members/:userId")
+    .route("/:projectId/members/:userId")
     .put(validateProjectPermission([UserRoleEnum.ADMIN]),
     updateMemberRole)
     .delete(validateProjectPermission([UserRoleEnum.ADMIN]), deleteMember);
